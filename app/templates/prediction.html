@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block title %}Prediction Result — MultiDisease{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .result-page {
+        min-height: calc(100vh - var(--nav-h) - 100px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5rem 2rem;
+    }
+    .result-container {
+        max-width: 620px;
+        width: 100%;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2.2rem;
+    }
+
+    /* Result Card */
+    .result-card {
+        width: 100%;
+        padding: 4.5rem 3.2rem;
+        border-radius: var(--radius);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        box-shadow: var(--shadow-lg);
+    }
+    .result-card.positive {
+        background: #f0fdf4;
+        border: 2px solid #86efac;
+    }
+    .result-card.negative {
+        background: #fef2f2;
+        border: 2px solid #fca5a5;
+    }
+
+    /* Icon */
+    .result-icon {
+        width: 96px; height: 96px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 4rem;
+    }
+    .result-card.positive .result-icon {
+        background: #dcfce7;
+        color: #16a34a;
+        animation: pulseGreen 2.2s ease-in-out infinite;
+    }
+    .result-card.negative .result-icon {
+        background: #fee2e2;
+        color: #dc2626;
+        animation: pulseRed 2.2s ease-in-out infinite;
+    }
+    @keyframes pulseGreen {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4); }
+        50%       { box-shadow: 0 0 0 18px rgba(22, 163, 74, 0); }
+    }
+    @keyframes pulseRed {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+        50%       { box-shadow: 0 0 0 18px rgba(220, 38, 38, 0); }
+    }
+
+    .result-label {
+        font-size: 1.25rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2.5px;
+    }
+    .result-card.positive .result-label { color: #15803d; }
+    .result-card.negative .result-label { color: #b91c1c; }
+
+    .result-text {
+        font-size: clamp(2.2rem, 4vw, 3rem);
+        font-weight: 800;
+        line-height: 1.25;
+        letter-spacing: -0.5px;
+    }
+    .result-card.positive .result-text { color: #166534; }
+    .result-card.negative .result-text { color: #991b1b; }
+
+    /* Disclaimer box */
+    .result-disclaimer {
+        font-size: 1.35rem;
+        color: #92400e;
+        background: #fffbeb;
+        border: 1px solid #fef3c7;
+        border-radius: var(--radius-sm);
+        padding: 1.4rem 1.8rem;
+        line-height: 1.6;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+    }
+    .result-disclaimer i { color: #d97706; margin-right: 0.5rem; font-size: 1.4rem; }
+
+    /* Action buttons */
+    .result-actions {
+        display: flex;
+        gap: 1.4rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .btn-res-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 1.2rem 2.8rem;
+        background: var(--surface);
+        color: var(--text-main);
+        font-size: 1.45rem;
+        font-weight: 600;
+        border: 1.5px solid var(--border-input);
+        border-radius: var(--radius-pill);
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: var(--shadow-sm);
+    }
+    .btn-res-outline:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+        transform: translateY(-2px);
+    }
+    .btn-res-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 1.2rem 2.8rem;
+        background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+        color: #fff;
+        font-size: 1.45rem;
+        font-weight: 600;
+        border: none;
+        border-radius: var(--radius-pill);
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 16px rgba(2, 132, 199, 0.25);
+    }
+    .btn-res-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 22px rgba(2, 132, 199, 0.35);
+        color: #fff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="result-page">
+    <div class="result-container fade-up">
+
+        {% set is_positive = 'not' in pre.lower() or 'does not' in pre.lower() %}
+
+        <div class="result-card {{ 'positive' if is_positive else 'negative' }}">
+            <span class="result-label">Diagnostic Assessment</span>
+
+            <div class="result-icon">
+                {% if is_positive %}
+                    <i class="fa-solid fa-circle-check"></i>
+                {% else %}
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                {% endif %}
+            </div>
+
+            <p class="result-text">{{ pre }}</p>
+        </div>
+
+        <div class="result-disclaimer">
+            <i class="fa-solid fa-circle-info"></i>
+            This prediction is generated by statistical machine learning models and is <strong>not a definitive medical diagnosis</strong>. Always consult a licensed physician or medical specialist for diagnostic decisions.
+        </div>
+
+        <div class="result-actions">
+            <button class="btn-res-outline" onclick="history.back()">
+                <i class="fa-solid fa-arrow-left"></i> Run Another Test
+            </button>
+            <a href="{{ url_for('main.home') }}" class="btn-res-primary">
+                <i class="fa-solid fa-house"></i> Return Home
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

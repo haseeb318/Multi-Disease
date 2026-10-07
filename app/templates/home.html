@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+{% block title %}Home — MultiDisease Predictor{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* ── Hero ─────────────────────────────────────────────────────────────── */
+    .hero {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 7rem 2.4rem 5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 2rem;
+    }
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.6rem 1.6rem;
+        background: #e0f2fe;
+        border: 1px solid #bae6fd;
+        border-radius: var(--radius-pill);
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #0369a1;
+    }
+    .hero h1 {
+        font-size: clamp(3.6rem, 5.5vw, 5.6rem);
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: -1.5px;
+        color: var(--text-main);
+    }
+    .hero h1 .gradient-text {
+        background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .hero p {
+        max-width: 600px;
+        font-size: 1.65rem;
+        color: var(--text-body);
+        line-height: 1.7;
+    }
+    .hero-actions {
+        display: flex;
+        gap: 1.4rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 0.8rem;
+    }
+
+    .btn-hero-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 1.3rem 3rem;
+        background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+        color: #fff;
+        font-size: 1.45rem;
+        font-weight: 600;
+        border: none;
+        border-radius: var(--radius-pill);
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 18px rgba(2, 132, 199, 0.25);
+    }
+    .btn-hero-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(2, 132, 199, 0.35);
+        color: #fff;
+    }
+
+    .btn-hero-outline {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 1.2rem 2.8rem;
+        background: var(--surface);
+        color: var(--text-main);
+        font-size: 1.45rem;
+        font-weight: 600;
+        border: 1.5px solid var(--border-input);
+        border-radius: var(--radius-pill);
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        box-shadow: var(--shadow-sm);
+    }
+    .btn-hero-outline:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+        transform: translateY(-2px);
+        color: var(--text-main);
+    }
+
+    /* ── Stats strip ─────────────────────────────────────────────────────── */
+    .stats-strip {
+        max-width: 720px;
+        margin: 0 auto 5.5rem;
+        background: var(--surface);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-md);
+        display: flex;
+        justify-content: center;
+    }
+    .stat {
+        flex: 1;
+        text-align: center;
+        padding: 2.2rem 1.6rem;
+        border-right: 1px solid var(--border-light);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+        font-size: 2.8rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .stat-label {
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        margin-top: 0.3rem;
+    }
+
+    /* ── Disease cards ───────────────────────────────────────────────────── */
+    .cards-section {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 2.4rem 8rem;
+    }
+    .cards-section h2 {
+        text-align: center;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 2.5px;
+        margin-bottom: 3rem;
+    }
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2.4rem;
+    }
+    .disease-card {
+        display: flex;
+        flex-direction: column;
+        gap: 1.8rem;
+        padding: 3.2rem;
+        border-radius: var(--radius);
+        background: var(--surface);
+        border: 1px solid var(--border-light);
+        box-shadow: var(--shadow-md);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: var(--text-main);
+        position: relative;
+        overflow: hidden;
+    }
+    .disease-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        border-color: #cbd5e1;
+    }
+
+    .card-icon {
+        width: 58px; height: 58px;
+        border-radius: 14px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2.4rem;
+    }
+    .card-icon.purple { background: #f3e8ff; color: #7c3aed; }
+    .card-icon.red    { background: #fee2e2; color: #dc2626; }
+
+    .card-body h3 {
+        font-size: 2.1rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 0.6rem;
+    }
+    .card-body p {
+        font-size: 1.45rem;
+        color: var(--text-body);
+        line-height: 1.6;
+    }
+
+    .card-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        list-style: none;
+        margin-top: 0.5rem;
+    }
+    .card-features li {
+        padding: 0.4rem 1rem;
+        background: #f1f5f9;
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-pill);
+        font-size: 1.15rem;
+        font-weight: 500;
+        color: var(--text-body);
+    }
+    .card-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 1.45rem;
+        font-weight: 600;
+        margin-top: auto;
+    }
+    .disease-card.diabetes .card-cta { color: #7c3aed; }
+    .disease-card.heart    .card-cta { color: #dc2626; }
+    .card-cta i { transition: transform 0.2s ease; }
+    .disease-card:hover .card-cta i { transform: translateX(5px); }
+
+    @media (max-width: 640px) {
+        .stats-strip { flex-direction: column; }
+        .stat { border-right: none; border-bottom: 1px solid var(--border-light); }
+        .stat:last-child { border-bottom: none; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero fade-up">
+    <div class="hero-badge fade-up">
+        <i class="fa-solid fa-circle-check"></i> ML-Powered Disease Diagnostic System
+    </div>
+    <h1 class="fade-up-2">
+        Predict Disease Risk<br>
+        with <span class="gradient-text">AI Accuracy</span>
+    </h1>
+    <p class="fade-up-3">
+        Enter medical diagnostic parameters and receive instant risk evaluations powered by validated machine learning models.
+    </p>
+    <div class="hero-actions fade-up-3">
+        <a href="{{ url_for('diabetes.diabete') }}" class="btn-hero-primary">
+            <i class="fa-solid fa-syringe"></i> Check Diabetes Risk
+        </a>
+        <a href="{{ url_for('heart.heart') }}" class="btn-hero-outline">
+            <i class="fa-solid fa-heart" style="color:#dc2626;"></i> Check Heart Disease
+        </a>
+    </div>
+</section>
+
+<!-- Key Stats -->
+<div class="stats-strip fade-up-2">
+    <div class="stat">
+        <div class="stat-num">2</div>
+        <div class="stat-label">Trained ML Models</div>
+    </div>
+    <div class="stat">
+        <div class="stat-num">21</div>
+        <div class="stat-label">Parameters Analyzed</div>
+    </div>
+    <div class="stat">
+        <div class="stat-num">~85%</div>
+        <div class="stat-label">Validation Accuracy</div>
+    </div>
+    <div class="stat">
+        <div class="stat-num">&lt; 1s</div>
+        <div class="stat-label">Analysis Speed</div>
+    </div>
+</div>
+
+<!-- Disease Selection Cards -->
+<section class="cards-section">
+    <h2>Select Diagnostic Module</h2>
+    <div class="cards-grid">
+
+        <!-- Diabetes Card -->
+        <a href="{{ url_for('diabetes.diabete') }}" class="disease-card diabetes fade-up-2">
+            <div class="card-icon purple"><i class="fa-solid fa-syringe"></i></div>
+            <div class="card-body">
+                <h3>Diabetes Predictor</h3>
+                <p>Evaluate diabetes risk using a Support Vector Machine (SVM) classifier trained on the Pima Indians Diabetes clinical records.</p>
+            </div>
+            <ul class="card-features">
+                <li>Glucose</li><li>BMI</li><li>Insulin</li>
+                <li>Blood Pressure</li><li>+4 more</li>
+            </ul>
+            <span class="card-cta">Start Diabetes Check <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+
+        <!-- Heart Disease Card -->
+        <a href="{{ url_for('heart.heart') }}" class="disease-card heart fade-up-3">
+            <div class="card-icon red"><i class="fa-solid fa-heart-pulse"></i></div>
+            <div class="card-body">
+                <h3>Heart Disease Predictor</h3>
+                <p>Detect cardiovascular risks using Logistic Regression trained on the UCI Heart Disease benchmark dataset.</p>
+            </div>
+            <ul class="card-features">
+                <li>Age</li><li>Cholesterol</li><li>Chest Pain</li>
+                <li>ECG</li><li>+9 more</li>
+            </ul>
+            <span class="card-cta">Start Heart Check <i class="fa-solid fa-arrow-right"></i></span>
+        </a>
+
+    </div>
+</section>
+{% endblock %}
